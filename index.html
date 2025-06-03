@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANKMI Token Presale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wallet-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .wallet-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #b8b8b8;
+            margin-bottom: 40px;
+        }
+
+        .presale-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .presale-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-box label {
+            display: block;
+            color: #b8b8b8;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .info-box .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 2s ease;
+        }
+
+        .buy-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sol-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .sol-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .token-output {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 60px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #b8b8b8;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .presale-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">WANKMI</div>
+                <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>WANKMI Token Presale</h1>
+            <p>Join the future of decentralized finance on Solana</p>
+
+            <div class="presale-card">
+                <div class="presale-info">
+                    <div class="info-box">
+                        <label>Presale Price</label>
+                        <div class="value">1 SOL = 100,000 WANKMI</div>
+                    </div>
+                    <div class="info-box">
+                        <label>Minimum Buy</label>
+                        <div class="value">0.1 SOL</div>
+                    </div>
+                    <div class="info-box">
+                        <label>Total Raised</label>
+                        <div class="value" id="totalRaised">0 SOL</div>
+                    </div>
+                    <div class="info-box">
+                        <label>Hard Cap</label>
+                        <div class="value">1000 SOL</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="buy-section">
+                    <div class="input-group">
+                        <input 
+                            type="number" 
+                            class="sol-input" 
+                            id="solAmount" 
+                            placeholder="Enter SOL amount"
+                            min="0.1"
+                            step="0.1"
+                        >
+                    </div>
+                    
+                    <div class="token-output">
+                        <span>You will receive:</span>
+                        <span id="tokenAmount">0 WANKMI</span>
+                    </div>
+
+                    <button class="buy-btn" id="buyBtn" disabled>
+                        Connect Wallet to Buy
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <h3>Total Supply</h3>
+                <div class="number">1,000,000,000</div>
+            </div>
+            <div class="stat-card">
+                <h3>Presale Allocation</h3>
+                <div class="number">40%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Liquidity Lock</h3>
+                <div class="number">2 Years</div>
+            </div>
+            <div class="stat-card">
+                <h3>Participants</h3>
+                <div class="number" id="participants">0</div>
+            </div>
+        </section>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.3.0/web3.min.js"></script>
+    <script>
+        // Configuration
+        const PRESALE_WALLET = 'YOUR_PRESALE_WALLET_ADDRESS'; // Replace with your Solana wallet address
+        const TOKEN_RATE = 100000; // 1 SOL = 100,000 WANKMI
+        const MIN_BUY = 0.1; // Minimum 0.1 SOL
+        const HARD_CAP = 1000; // 1000 SOL
+
+        // State
+        let connected = false;
+        let walletPublicKey = null;
+        let totalRaised = 0;
+        let participantCount = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            updateStats();
+        });
+
+        // Wallet Connection
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    const response = await window.solana.connect();
+                    walletPublicKey = response.publicKey.toString();
+                    connected = true;
+                    
+                    document.getElementById('connectWallet').textContent = 
+                        walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
+                    
+                    document.getElementById('buyBtn').disabled = false;
+                    document.getElementById('buyBtn').textContent = 'Buy WANKMI';
+                    
+                    showToast('Wallet connected successfully!', 'success');
+                } catch (err) {
+                    showToast('Failed to connect wallet', 'error');
+                }
+            } else {
+                showToast('Please install Phantom wallet', 'error');
+                window.open('https://phantom.app/', '_blank');
+            }
+        });
+
+        // Calculate tokens
+        document.getElementById('solAmount').addEventListener('input', function(e) {
+            const solAmount = parseFloat(e.target.value) || 0;
+            const tokenAmount = solAmount * TOKEN_RATE;
+            document.getElementById('tokenAmount').textContent = 
+                tokenAmount.toLocaleString() + ' WANKMI';
+        });
+
+        // Buy tokens
+        document.getElementById('buyBtn').addEventListener('click', async () => {
+            if (!connected) {
+                showToast('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const solAmount = parseFloat(document.getElementById('solAmount').value);
+            
+            if (solAmount < MIN_BUY) {
+                showToast(`Minimum buy amount is ${MIN_BUY} SOL`, 'error');
+                return;
+            }
+
+            if (totalRaised + solAmount > HARD_CAP) {
+                showToast('This amount exceeds the hard cap', 'error');
+                return;
+            }
+
+            try {
+                // Show loading state
+                const buyBtn = document.getElementById('buyBtn');
+                buyBtn.disabled = true;
+                buyBtn.textContent = 'Processing...';
+
+                // Create transaction
+                const connection = new solanaWeb3.Connection(
+                    solanaWeb3.clusterApiUrl('mainnet-beta'),
+                    'confirmed'
+                );
+
+                const transaction = new solanaWeb3.Transaction().add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
+                        toPubkey: new solanaWeb3.PublicKey(PRESALE_WALLET),
+                        lamports: solAmount * solanaWeb3.LAMPORTS_PER_SOL
+                    })
+                );
+
+                // Send transaction
+                const signature = await window.solana.signAndSendTransaction(transaction);
+                
+                // Update stats
+                totalRaised += solAmount;
+                participantCount++;
+                updateProgress();
+                updateStats();
+
+                showToast('Purchase successful! Tokens will be distributed after presale.', 'success');
+                
+                // Reset form
+                document.getElementById('solAmount').value = '';
+                document.getElementById('tokenAmount').textContent = '0 WANKMI';
+                
+            } catch (error) {
+                showToast('Transaction failed. Please try again.', 'error');
+                console.error(error);
+            } finally {
+                // Reset button
+                const buyBtn = document.getElementById('buyBtn');
+                buyBtn.disabled = false;
+                buyBtn.textContent = 'Buy WANKMI';
+            }
+        });
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (totalRaised / HARD_CAP) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('totalRaised').textContent = totalRaised.toFixed(2) + ' SOL';
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('participants').textContent = participantCount;
+        }
+
+        // Show toast notification
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Load Solana Web3.js
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
