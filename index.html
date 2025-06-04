@@ -432,6 +432,10 @@
                     <button class="buy-btn" id="buyBtn" disabled>
                         Connect Wallet to Buy
                     </button>
+                    
+                    <div style="margin-top: 10px; text-align: center; font-size: 12px; color: #666;">
+                        <a href="#" onclick="testWalletConnection(); return false;" style="color: #667eea;">Having issues? Test wallet connection</a>
+                    </div>
                 </div>
 
                 <div class="transaction-history" id="transactionHistory" style="display: none;">
@@ -490,6 +494,31 @@
             connection = new solanaWeb3.Connection(CONFIG.RPC_ENDPOINT, CONFIG.COMMITMENT);
         }
 
+        // Get Phantom provider with retries
+        const getProvider = async () => {
+            // Check if Phantom wallet is already available
+            if ("solana" in window) {
+                const anyWindow = window;
+                const provider = anyWindow.solana;
+                if (provider.isPhantom) {
+                    return provider;
+                }
+            }
+            
+            // Wait for Phantom to inject itself
+            let attempts = 0;
+            while (attempts < 20) {
+                const anyWindow = window;
+                if (anyWindow.solana && anyWindow.solana.isPhantom) {
+                    return anyWindow.solana;
+                }
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            return null;
+        };
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async function() {
             initializeSolana();
@@ -498,60 +527,85 @@
             // Update presale address display
             document.querySelector('#presaleAddress strong').textContent = PRESALE_WALLET;
             
-            // Wait a bit for wallet to be injected
-            setTimeout(() => {
-                checkWalletAvailability();
-            }, 100);
+            // Check for wallet after a delay
+            setTimeout(async () => {
+                provider = await getProvider();
+                if (provider) {
+                    console.log('Phantom wallet detected');
+                    
+                    // Try to eagerly connect
+                    try {
+                        const resp = await provider.connect({ onlyIfTrusted: true });
+                        if (resp.publicKey) {
+                            console.log('Wallet auto-connected');
+                            handleWalletConnection(resp.publicKey);
+                        }
+                    } catch (err) {
+                        console.log('Wallet not previously connected');
+                    }
+                }
+            }, 500);
         });
 
-        // Check wallet availability
-        async function checkWalletAvailability() {
-            if ('phantom' in window) {
-                provider = window.phantom?.solana;
-            } else if ('solana' in window) {
-                provider = window.solana;
-            }
-            
-            if (provider?.isPhantom) {
-                console.log('Phantom wallet found!');
-                
-                // Check if already connected
-                try {
-                    const resp = await provider.connect({ onlyIfTrusted: true });
-                    handleWalletConnection(resp.publicKey);
-                } catch (error) {
-                    // Wallet not connected, this is normal
-                    console.log('Wallet not auto-connected');
-                }
-            }
-        }
-
-        // Connect wallet
+        // Connect wallet button click
         document.getElementById('connectWallet').addEventListener('click', async () => {
-            // Try multiple methods to find wallet
-            if ('phantom' in window) {
-                provider = window.phantom?.solana;
-            } else if ('solana' in window) {
-                provider = window.solana;
+            console.log('Connect wallet clicked');
+            
+            // Method 1: Try the standard approach
+            provider = await getProvider();
+            
+            if (!provider) {
+                // Method 2: Direct check without async
+                if (window.solana && window.solana.isPhantom) {
+                    provider = window.solana;
+                }
             }
             
             if (!provider) {
-                showToast('No Solana wallet found. Please install Phantom.', 'error');
-                window.open('https://phantom.app/', '_blank');
+                console.log('Phantom not found after all attempts');
+                showToast('Phantom wallet not found. Please install it first.', 'error');
+                
+                // Show helpful message
+                const install = confirm(
+                    'Phantom wallet is not installed or not detected.\n\n' +
+                    'Would you like to install Phantom wallet?\n\n' +
+                    'Note: After installation, please refresh this page.'
+                );
+                
+                if (install) {
+                    window.open('https://phantom.app/', '_blank');
+                }
                 return;
             }
 
             try {
-                // Request connection
-                const resp = await provider.connect();
-                handleWalletConnection(resp.publicKey);
-            } catch (error) {
-                if (error.code === 4001) {
-                    showToast('Connection cancelled by user', 'warning');
-                } else {
-                    showToast('Failed to connect wallet: ' + (error.message || 'Unknown error'), 'error');
+                console.log('Requesting connection...');
+                
+                // Try different connection methods
+                let resp;
+                try {
+                    resp = await provider.connect();
+                } catch (err) {
+                    console.log('First connection attempt failed, trying alternate method...');
+                    // Try with empty options
+                    resp = await provider.request({ method: "connect" });
                 }
-                console.error('Connection error:', error);
+                
+                console.log('Connected:', resp.publicKey.toString());
+                handleWalletConnection(resp.publicKey);
+            } catch (err) {
+                console.error('Connection error:', err);
+                if (err.code === 4001) {
+                    showToast('User rejected the connection request', 'warning');
+                } else if (err.code === -32603) {
+                    showToast('Please unlock your Phantom wallet and try again', 'warning');
+                } else {
+                    showToast('Connection failed: ' + (err.message || 'Unknown error'), 'error');
+                    
+                    // Show debug info
+                    console.log('Full error:', err);
+                    console.log('Provider object:', provider);
+                }
             }
         });
 
@@ -560,6 +614,7 @@
             if (!publicKey) return;
             
             walletPublicKey = publicKey.toString();
+            console.log('Wallet connected:', walletPublicKey);
             
             // Update UI
             document.getElementById('connectWallet').textContent = 
@@ -571,17 +626,24 @@
             // Load user transactions
             loadUserTransactions();
             
-            // Listen for account changes
-            provider.on('accountChanged', (publicKey) => {
-                if (publicKey) {
-                    walletPublicKey = publicKey.toString();
-                    document.getElementById('connectWallet').textContent = 
-                        walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-                } else {
-                    // Wallet disconnected
+            // Set up event listeners
+            if (provider) {
+                provider.on("disconnect", () => {
+                    console.log('Wallet disconnected');
                     handleDisconnect();
-                }
-            });
+                });
+                
+                provider.on("accountChanged", (publicKey) => {
+                    if (publicKey) {
+                        console.log('Account changed:', publicKey.toString());
+                        walletPublicKey = publicKey.toString();
+                        document.getElementById('connectWallet').textContent = 
+                            walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
+                    } else {
+                        handleDisconnect();
+                    }
+                });
+            }
             
             showToast('Wallet connected successfully!', 'success');
         }
@@ -805,11 +867,43 @@
             }, 4000);
         }
 
-        // Listen for wallet events
-        if (window.phantom?.solana) {
-            window.phantom.solana.on('disconnect', () => {
-                handleDisconnect();
-            });
+        // Debug helper
+        window.debugWallet = async () => {
+            console.log('=== Wallet Debug Info ===');
+            console.log('window.solana exists:', 'solana' in window);
+            console.log('window.phantom exists:', 'phantom' in window);
+            if (window.solana) {
+                console.log('window.solana.isPhantom:', window.solana.isPhantom);
+                console.log('window.solana:', window.solana);
+            }
+            const provider = await getProvider();
+            console.log('Provider found:', !!provider);
+            return provider;
+        };
+
+        // Test wallet connection
+        async function testWalletConnection() {
+            console.log('Testing wallet connection...');
+            
+            // Check if Phantom is installed
+            const isPhantomInstalled = window.solana && window.solana.isPhantom;
+            
+            if (!isPhantomInstalled) {
+                alert('Phantom wallet is not installed!\n\n' +
+                      'Please install Phantom wallet extension from:\n' +
+                      'https://phantom.app/\n\n' +
+                      'After installation, refresh this page.');
+                window.open('https://phantom.app/', '_blank');
+                return;
+            }
+            
+            alert('✅ Phantom wallet detected!\n\n' +
+                  'Wallet is installed correctly.\n' +
+                  'Click "Connect Wallet" button to connect.');
+            
+            // Log debug info
+            console.log('Phantom detected:', window.solana);
+            console.log('Is Phantom:', window.solana.isPhantom);
         }
     </script>
 </body>
