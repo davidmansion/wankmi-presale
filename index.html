@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANKMI Token Presale</title>
+    <title>WANKMI Token Presale - Live on Solana</title>
     <style>
         * {
             margin: 0;
@@ -34,6 +34,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .logo {
@@ -42,6 +44,21 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .network-badge {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .wallet-btn {
@@ -78,6 +95,17 @@
             margin-bottom: 40px;
         }
 
+        .warning-banner {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #ff9800;
+        }
+
         .presale-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -86,6 +114,22 @@
             max-width: 600px;
             margin: 0 auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .presale-address {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .presale-address:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .presale-info {
@@ -120,7 +164,7 @@
             height: 20px;
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .progress-fill {
@@ -128,6 +172,13 @@
             height: 100%;
             width: 0%;
             transition: width 2s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #b8b8b8;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
 
         .buy-section {
@@ -183,7 +234,7 @@
             overflow: hidden;
         }
 
-        .buy-btn:hover {
+        .buy-btn:hover:not(:disabled) {
             transform: scale(1.02);
         }
 
@@ -192,704 +243,27 @@
             cursor: not-allowed;
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 60px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-card h3 {
-            color: #b8b8b8;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .toast.success {
-            border-left: 4px solid #4caf50;
-        }
-
-        .toast.error {
-            border-left: 4px solid #f44336;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .presale-info {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">WANKMI</div>
-                <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
-            </nav>
-        </header>
-
-        <section class="hero">
-            <h1>WANKMI Token Presale</h1>
-            <p>Join the future of decentralized finance on Solana</p>
-
-            <div class="presale-card">
-                <div class="presale-info">
-                    <div class="info-box">
-                        <label>Presale Price</label>
-                        <div class="value">1 SOL = 100,000 WANKMI</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Minimum Buy</label>
-                        <div class="value">0.1 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Total Raised</label>
-                        <div class="value" id="totalRaised">0 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Hard Cap</label>
-                        <div class="value">1000 SOL</div>
-                    </div>
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-
-                <div class="buy-section">
-                    <div class="input-group">
-                        <input 
-                            type="number" 
-                            class="sol-input" 
-                            id="solAmount" 
-                            placeholder="Enter SOL amount"
-                            min="0.1"
-                            step="0.1"
-                        >
-                    </div>
-                    
-                    <div class="token-output">
-                        <span>You will receive:</span>
-                        <span id="tokenAmount">0 WANKMI</span>
-                    </div>
-
-                    <button class="buy-btn" id="buyBtn" disabled>
-                        Connect Wallet to Buy
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section class="stats">
-            <div class="stat-card">
-                <h3>Total Supply</h3>
-                <div class="number">1,000,000,000</div>
-            </div>
-            <div class="stat-card">
-                <h3>Presale Allocation</h3>
-                <div class="number">40%</div>
-            </div>
-            <div class="stat-card">
-                <h3>Liquidity Lock</h3>
-                <div class="number">2 Years</div>
-            </div>
-            <div class="stat-card">
-                <h3>Participants</h3>
-                <div class="number" id="participants">0</div>
-            </div>
-        </section>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.3.0/web3.min.js"></script>
-    <script>
-        // Configuration
-        const PRESALE_WALLET = <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANKMI Token Presale</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .wallet-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .wallet-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .hero {
-            text-align: center;
-            padding: 80px 0;
-        }
-
-        .hero h1 {
-            font-size: 56px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 20px;
-            color: #b8b8b8;
-            margin-bottom: 40px;
-        }
-
-        .presale-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .presale-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .info-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .info-box label {
-            display: block;
-            color: #b8b8b8;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-
-        .info-box .value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.1);
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100%;
-            width: 0%;
-            transition: width 2s ease;
-        }
-
-        .buy-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 10px;
+        .transaction-history {
             margin-top: 30px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .sol-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 18px;
-        }
-
-        .sol-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .token-output {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .buy-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 18px;
-            border-radius: 10px;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .buy-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .buy-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 60px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-card h3 {
+        .transaction-history h3 {
+            margin-bottom: 15px;
             color: #b8b8b8;
+        }
+
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 5px;
             margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .toast.success {
-            border-left: 4px solid #4caf50;
-        }
-
-        .toast.error {
-            border-left: 4px solid #f44336;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .presale-info {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">WANKMI</div>
-                <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
-            </nav>
-        </header>
-
-        <section class="hero">
-            <h1>WANKMI Token Presale</h1>
-            <p>Join the future of decentralized finance on Solana</p>
-
-            <div class="presale-card">
-                <div class="presale-info">
-                    <div class="info-box">
-                        <label>Presale Price</label>
-                        <div class="value">1 SOL = 100,000 WANKMI</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Minimum Buy</label>
-                        <div class="value">0.1 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Total Raised</label>
-                        <div class="value" id="totalRaised">0 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Hard Cap</label>
-                        <div class="value">1000 SOL</div>
-                    </div>
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-
-                <div class="buy-section">
-                    <div class="input-group">
-                        <input 
-                            type="number" 
-                            class="sol-input" 
-                            id="solAmount" 
-                            placeholder="Enter SOL amount"
-                            min="0.1"
-                            step="0.1"
-                        >
-                    </div>
-                    
-                    <div class="token-output">
-                        <span>You will receive:</span>
-                        <span id="tokenAmount">0 WANKMI</span>
-                    </div>
-
-                    <button class="buy-btn" id="buyBtn" disabled>
-                        Connect Wallet to Buy
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section class="stats">
-            <div class="stat-card">
-                <h3>Total Supply</h3>
-                <div class="number">1,000,000,000</div>
-            </div>
-            <div class="stat-card">
-                <h3>Presale Allocation</h3>
-                <div class="number">40%</div>
-            </div>
-            <div class="stat-card">
-                <h3>Liquidity Lock</h3>
-                <div class="number">2 Years</div>
-            </div>
-            <div class="stat-card">
-                <h3>Participants</h3>
-                <div class="number" id="participants">0</div>
-            </div>
-        </section>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.3.0/web3.min.js"></script>
-    <script>
-        // Configuration
-        const PRESALE_WALLET = <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANKMI Token Presale</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .wallet-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .wallet-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .hero {
-            text-align: center;
-            padding: 80px 0;
-        }
-
-        .hero h1 {
-            font-size: 56px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 20px;
-            color: #b8b8b8;
-            margin-bottom: 40px;
-        }
-
-        .presale-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .presale-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .info-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .info-box label {
-            display: block;
-            color: #b8b8b8;
-            margin-bottom: 5px;
             font-size: 14px;
-        }
-
-        .info-box .value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.1);
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100%;
-            width: 0%;
-            transition: width 2s ease;
-        }
-
-        .buy-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 30px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .sol-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 18px;
-        }
-
-        .sol-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .token-output {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .buy-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 18px;
-            border-radius: 10px;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .buy-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .buy-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .stats {
@@ -932,6 +306,8 @@
             border-radius: 10px;
             display: none;
             animation: slideIn 0.3s ease;
+            max-width: 400px;
+            word-wrap: break-word;
         }
 
         @keyframes slideIn {
@@ -951,354 +327,24 @@
             border-left: 4px solid #f44336;
         }
 
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .presale-info {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">WANKMI</div>
-                <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
-            </nav>
-        </header>
-
-        <section class="hero">
-            <h1>WANKMI Token Presale</h1>
-            <p>Join the future of decentralized finance on Solana</p>
-
-            <div class="presale-card">
-                <div class="presale-info">
-                    <div class="info-box">
-                        <label>Presale Price</label>
-                        <div class="value">1 SOL = 100,000 WANKMI</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Minimum Buy</label>
-                        <div class="value">0.1 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Total Raised</label>
-                        <div class="value" id="totalRaised">0 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Hard Cap</label>
-                        <div class="value">1000 SOL</div>
-                    </div>
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-
-                <div class="buy-section">
-                    <div class="input-group">
-                        <input 
-                            type="number" 
-                            class="sol-input" 
-                            id="solAmount" 
-                            placeholder="Enter SOL amount"
-                            min="0.1"
-                            step="0.1"
-                        >
-                    </div>
-                    
-                    <div class="token-output">
-                        <span>You will receive:</span>
-                        <span id="tokenAmount">0 WANKMI</span>
-                    </div>
-
-                    <button class="buy-btn" id="buyBtn" disabled>
-                        Connect Wallet to Buy
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section class="stats">
-            <div class="stat-card">
-                <h3>Total Supply</h3>
-                <div class="number">1,000,000,000</div>
-            </div>
-            <div class="stat-card">
-                <h3>Presale Allocation</h3>
-                <div class="number">40%</div>
-            </div>
-            <div class="stat-card">
-                <h3>Liquidity Lock</h3>
-                <div class="number">2 Years</div>
-            </div>
-            <div class="stat-card">
-                <h3>Participants</h3>
-                <div class="number" id="participants">0</div>
-            </div>
-        </section>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.3.0/web3.min.js"></script>
-    <script>
-        // Configuration
-        const PRESALE_WALLET = <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANKMI Token Presale</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .toast.warning {
+            border-left: 4px solid #ff9800;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .wallet-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .wallet-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .hero {
-            text-align: center;
-            padding: 80px 0;
-        }
-
-        .hero h1 {
-            font-size: 56px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 20px;
-            color: #b8b8b8;
-            margin-bottom: 40px;
-        }
-
-        .presale-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .presale-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .info-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .info-box label {
-            display: block;
-            color: #b8b8b8;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-
-        .info-box .value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.1);
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
             height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
         }
 
-        .progress-fill {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100%;
-            width: 0%;
-            transition: width 2s ease;
-        }
-
-        .buy-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 30px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .sol-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 18px;
-        }
-
-        .sol-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .token-output {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .buy-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 18px;
-            border-radius: 10px;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .buy-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .buy-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 60px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-card h3 {
-            color: #b8b8b8;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .toast.success {
-            border-left: 4px solid #4caf50;
-        }
-
-        .toast.error {
-            border-left: 4px solid #f44336;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
@@ -1309,6 +355,10 @@
             .presale-info {
                 grid-template-columns: 1fr;
             }
+            
+            .nav {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -1317,7 +367,10 @@
         <header>
             <nav>
                 <div class="logo">WANKMI</div>
-                <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+                <div class="wallet-info">
+                    <span class="network-badge" id="networkBadge">Mainnet</span>
+                    <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+                </div>
             </nav>
         </header>
 
@@ -1326,6 +379,15 @@
             <p>Join the future of decentralized finance on Solana</p>
 
             <div class="presale-card">
+                <div class="warning-banner">
+                    ⚠️ Always verify the presale address before sending SOL. Only send from wallets you control.
+                </div>
+
+                <div class="presale-address" id="presaleAddress" onclick="copyAddress()">
+                    Presale Address: <strong>4Wy3PLhKtSa2tJD3i69w3YwFSqsCuWPCdzBGBTNwrJZE</strong>
+                    <br><small>(Click to copy)</small>
+                </div>
+
                 <div class="presale-info">
                     <div class="info-box">
                         <label>Presale Price</label>
@@ -1348,6 +410,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
+                <div class="progress-text" id="progressText">0% Complete (0 / 1000 SOL)</div>
 
                 <div class="buy-section">
                     <div class="input-group">
@@ -1369,6 +432,11 @@
                     <button class="buy-btn" id="buyBtn" disabled>
                         Connect Wallet to Buy
                     </button>
+                </div>
+
+                <div class="transaction-history" id="transactionHistory" style="display: none;">
+                    <h3>Your Transactions</h3>
+                    <div id="transactionList"></div>
                 </div>
             </div>
         </section>
@@ -1395,73 +463,121 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.3.0/web3.min.js"></script>
+    <!-- Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
+    
     <script>
+        // IMPORTANT: Replace this with your actual presale wallet address
+        const PRESALE_WALLET = 4Wy3PLhKtSa2tJD3i69w3YwFSqsCuWPCdzBGBTNwrJZE; // ← CHANGE THIS!
+        
         // Configuration
-        const PRESALE_WALLET = 'YOUR_PRESALE_WALLET_ADDRESS'; // Replace with your Solana wallet address
-        const TOKEN_RATE = 100000; // 1 SOL = 100,000 WANKMI
-        const MIN_BUY = 0.1; // Minimum 0.1 SOL
-        const HARD_CAP = 1000; // 1000 SOL
+        const CONFIG = {
+            TOKEN_RATE: 100000, // 1 SOL = 100,000 WANKMI
+            MIN_BUY: 0.1, // Minimum 0.1 SOL
+            HARD_CAP: 1000, // 1000 SOL
+            RPC_ENDPOINT: 'https://api.mainnet-beta.solana.com',
+            COMMITMENT: 'confirmed'
+        };
 
         // State
-        let connected = false;
+        let walletAdapter = null;
         let walletPublicKey = null;
-        let totalRaised = 0;
-        let participantCount = 0;
+        let connection = null;
+        let userTransactions = [];
 
-        // Initialize
+        // Initialize Solana connection
+        function initializeSolana() {
+            connection = new solanaWeb3.Connection(CONFIG.RPC_ENDPOINT, CONFIG.COMMITMENT);
+        }
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            updateProgress();
-            updateStats();
+            initializeSolana();
+            loadPresaleData();
+            checkWalletConnection();
+            
+            // Update presale address display
+            document.querySelector('#presaleAddress strong').textContent = PRESALE_WALLET;
         });
 
-        // Wallet Connection
-        document.getElementById('connectWallet').addEventListener('click', async () => {
+        // Check if wallet is already connected
+        async function checkWalletConnection() {
             if (window.solana && window.solana.isPhantom) {
                 try {
-                    const response = await window.solana.connect();
-                    walletPublicKey = response.publicKey.toString();
-                    connected = true;
-                    
-                    document.getElementById('connectWallet').textContent = 
-                        walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-                    
-                    document.getElementById('buyBtn').disabled = false;
-                    document.getElementById('buyBtn').textContent = 'Buy WANKMI';
-                    
-                    showToast('Wallet connected successfully!', 'success');
-                } catch (err) {
-                    showToast('Failed to connect wallet', 'error');
+                    const response = await window.solana.connect({ onlyIfTrusted: true });
+                    if (response.publicKey) {
+                        handleWalletConnection(response.publicKey);
+                    }
+                } catch (error) {
+                    // Wallet not connected, ignore
                 }
-            } else {
-                showToast('Please install Phantom wallet', 'error');
+            }
+        }
+
+        // Connect wallet
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (!window.solana || !window.solana.isPhantom) {
+                showToast('Please install Phantom wallet extension', 'error');
                 window.open('https://phantom.app/', '_blank');
+                return;
+            }
+
+            try {
+                const response = await window.solana.connect();
+                handleWalletConnection(response.publicKey);
+            } catch (error) {
+                showToast('Failed to connect wallet: ' + error.message, 'error');
             }
         });
+
+        // Handle successful wallet connection
+        function handleWalletConnection(publicKey) {
+            walletPublicKey = publicKey.toString();
+            walletAdapter = window.solana;
+            
+            // Update UI
+            document.getElementById('connectWallet').textContent = 
+                walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
+            
+            document.getElementById('buyBtn').disabled = false;
+            document.getElementById('buyBtn').textContent = 'Buy WANKMI';
+            
+            // Load user transactions
+            loadUserTransactions();
+            
+            showToast('Wallet connected successfully!', 'success');
+        }
 
         // Calculate tokens
         document.getElementById('solAmount').addEventListener('input', function(e) {
             const solAmount = parseFloat(e.target.value) || 0;
-            const tokenAmount = solAmount * TOKEN_RATE;
+            const tokenAmount = solAmount * CONFIG.TOKEN_RATE;
             document.getElementById('tokenAmount').textContent = 
                 tokenAmount.toLocaleString() + ' WANKMI';
         });
 
         // Buy tokens
         document.getElementById('buyBtn').addEventListener('click', async () => {
-            if (!connected) {
+            if (!walletPublicKey) {
                 showToast('Please connect your wallet first', 'error');
                 return;
             }
 
             const solAmount = parseFloat(document.getElementById('solAmount').value);
             
-            if (solAmount < MIN_BUY) {
-                showToast(`Minimum buy amount is ${MIN_BUY} SOL`, 'error');
+            // Validation
+            if (isNaN(solAmount) || solAmount <= 0) {
+                showToast('Please enter a valid amount', 'error');
                 return;
             }
 
-            if (totalRaised + solAmount > HARD_CAP) {
+            if (solAmount < CONFIG.MIN_BUY) {
+                showToast(`Minimum buy amount is ${CONFIG.MIN_BUY} SOL`, 'error');
+                return;
+            }
+
+            const currentRaised = parseFloat(document.getElementById('totalRaised').textContent);
+            if (currentRaised + solAmount > CONFIG.HARD_CAP) {
                 showToast('This amount exceeds the hard cap', 'error');
                 return;
             }
@@ -1470,58 +586,145 @@
                 // Show loading state
                 const buyBtn = document.getElementById('buyBtn');
                 buyBtn.disabled = true;
-                buyBtn.textContent = 'Processing...';
+                buyBtn.innerHTML = '<span class="loader"></span>Processing Transaction...';
 
                 // Create transaction
-                const connection = new solanaWeb3.Connection(
-                    solanaWeb3.clusterApiUrl('mainnet-beta'),
-                    'confirmed'
-                );
-
-                const transaction = new solanaWeb3.Transaction().add(
+                const fromPubkey = new solanaWeb3.PublicKey(walletPublicKey);
+                const toPubkey = new solanaWeb3.PublicKey(PRESALE_WALLET);
+                
+                // Get latest blockhash
+                const { blockhash } = await connection.getLatestBlockhash();
+                
+                // Create transaction
+                const transaction = new solanaWeb3.Transaction({
+                    recentBlockhash: blockhash,
+                    feePayer: fromPubkey
+                }).add(
                     solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
-                        toPubkey: new solanaWeb3.PublicKey(PRESALE_WALLET),
+                        fromPubkey: fromPubkey,
+                        toPubkey: toPubkey,
                         lamports: solAmount * solanaWeb3.LAMPORTS_PER_SOL
                     })
                 );
 
-                // Send transaction
-                const signature = await window.solana.signAndSendTransaction(transaction);
+                // Send and confirm transaction
+                const signature = await walletAdapter.signAndSendTransaction(transaction);
                 
-                // Update stats
-                totalRaised += solAmount;
-                participantCount++;
-                updateProgress();
-                updateStats();
+                showToast('Transaction sent! Confirming...', 'success');
+                
+                // Wait for confirmation
+                const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+                
+                if (confirmation.value.err) {
+                    throw new Error('Transaction failed');
+                }
 
-                showToast('Purchase successful! Tokens will be distributed after presale.', 'success');
+                // Success!
+                showToast(`Success! TX: ${signature.slice(0, 8)}...`, 'success');
+                
+                // Add to transaction history
+                addTransaction({
+                    signature: signature,
+                    amount: solAmount,
+                    tokens: solAmount * CONFIG.TOKEN_RATE,
+                    timestamp: new Date().toLocaleString()
+                });
+                
+                // Update stats (in real app, this would come from backend)
+                updatePresaleStats(solAmount);
                 
                 // Reset form
                 document.getElementById('solAmount').value = '';
                 document.getElementById('tokenAmount').textContent = '0 WANKMI';
                 
             } catch (error) {
-                showToast('Transaction failed. Please try again.', 'error');
-                console.error(error);
+                console.error('Transaction error:', error);
+                showToast('Transaction failed: ' + error.message, 'error');
             } finally {
                 // Reset button
                 const buyBtn = document.getElementById('buyBtn');
                 buyBtn.disabled = false;
-                buyBtn.textContent = 'Buy WANKMI';
+                buyBtn.innerHTML = 'Buy WANKMI';
             }
         });
 
-        // Update progress bar
-        function updateProgress() {
-            const progress = (totalRaised / HARD_CAP) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('totalRaised').textContent = totalRaised.toFixed(2) + ' SOL';
+        // Add transaction to history
+        function addTransaction(tx) {
+            userTransactions.unshift(tx);
+            localStorage.setItem('wankmi_transactions', JSON.stringify(userTransactions));
+            displayTransactions();
         }
 
-        // Update stats
-        function updateStats() {
-            document.getElementById('participants').textContent = participantCount;
+        // Display transaction history
+        function displayTransactions() {
+            const historyDiv = document.getElementById('transactionHistory');
+            const listDiv = document.getElementById('transactionList');
+            
+            if (userTransactions.length > 0) {
+                historyDiv.style.display = 'block';
+                listDiv.innerHTML = userTransactions.map(tx => `
+                    <div class="transaction-item">
+                        <span>${tx.amount} SOL → ${tx.tokens.toLocaleString()} WANKMI</span>
+                        <span>${tx.timestamp}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Load user transactions from localStorage
+        function loadUserTransactions() {
+            const saved = localStorage.getItem('wankmi_transactions');
+            if (saved) {
+                userTransactions = JSON.parse(saved);
+                displayTransactions();
+            }
+        }
+
+        // Update presale stats (mock - in real app, fetch from backend)
+        function updatePresaleStats(newAmount) {
+            const currentRaised = parseFloat(document.getElementById('totalRaised').textContent);
+            const newTotal = currentRaised + newAmount;
+            
+            document.getElementById('totalRaised').textContent = newTotal.toFixed(2) + ' SOL';
+            
+            const progress = (newTotal / CONFIG.HARD_CAP) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `${progress.toFixed(1)}% Complete (${newTotal.toFixed(2)} / ${CONFIG.HARD_CAP} SOL)`;
+            
+            // Update participants (mock)
+            const currentParticipants = parseInt(document.getElementById('participants').textContent);
+            document.getElementById('participants').textContent = currentParticipants + 1;
+            
+            // Save to localStorage (mock persistence)
+            localStorage.setItem('wankmi_stats', JSON.stringify({
+                raised: newTotal,
+                participants: currentParticipants + 1
+            }));
+        }
+
+        // Load presale data (mock - in real app, fetch from backend)
+        function loadPresaleData() {
+            const saved = localStorage.getItem('wankmi_stats');
+            if (saved) {
+                const stats = JSON.parse(saved);
+                document.getElementById('totalRaised').textContent = stats.raised.toFixed(2) + ' SOL';
+                document.getElementById('participants').textContent = stats.participants;
+                
+                const progress = (stats.raised / CONFIG.HARD_CAP) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressText').textContent = 
+                    `${progress.toFixed(1)}% Complete (${stats.raised.toFixed(2)} / ${CONFIG.HARD_CAP} SOL)`;
+            }
+        }
+
+        // Copy presale address
+        function copyAddress() {
+            navigator.clipboard.writeText(PRESALE_WALLET).then(() => {
+                showToast('Presale address copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy address', 'error');
+            });
         }
 
         // Show toast notification
@@ -1533,445 +736,21 @@
             
             setTimeout(() => {
                 toast.style.display = 'none';
-            }, 3000);
+            }, 4000);
         }
 
-        // Load Solana Web3.js
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js';
-        document.head.appendChild(script);
-    </script>
-</body>
-</html>; // Replace with your Solana wallet address
-        const TOKEN_RATE = 100000; // 1 SOL = 100,000 WANKMI
-        const MIN_BUY = 0.1; // Minimum 0.1 SOL
-        const HARD_CAP = 1000; // 1000 SOL
-
-        // State
-        let connected = false;
-        let walletPublicKey = null;
-        let totalRaised = 0;
-        let participantCount = 0;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateProgress();
-            updateStats();
+        // Check network
+        window.solana?.on('connect', () => {
+            console.log('Wallet connected');
         });
 
-        // Wallet Connection
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    const response = await window.solana.connect();
-                    walletPublicKey = response.publicKey.toString();
-                    connected = true;
-                    
-                    document.getElementById('connectWallet').textContent = 
-                        walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-                    
-                    document.getElementById('buyBtn').disabled = false;
-                    document.getElementById('buyBtn').textContent = 'Buy WANKMI';
-                    
-                    showToast('Wallet connected successfully!', 'success');
-                } catch (err) {
-                    showToast('Failed to connect wallet', 'error');
-                }
-            } else {
-                showToast('Please install Phantom wallet', 'error');
-                window.open('https://phantom.app/', '_blank');
-            }
+        window.solana?.on('disconnect', () => {
+            walletPublicKey = null;
+            document.getElementById('connectWallet').textContent = 'Connect Wallet';
+            document.getElementById('buyBtn').disabled = true;
+            document.getElementById('buyBtn').textContent = 'Connect Wallet to Buy';
+            showToast('Wallet disconnected', 'warning');
         });
-
-        // Calculate tokens
-        document.getElementById('solAmount').addEventListener('input', function(e) {
-            const solAmount = parseFloat(e.target.value) || 0;
-            const tokenAmount = solAmount * TOKEN_RATE;
-            document.getElementById('tokenAmount').textContent = 
-                tokenAmount.toLocaleString() + ' WANKMI';
-        });
-
-        // Buy tokens
-        document.getElementById('buyBtn').addEventListener('click', async () => {
-            if (!connected) {
-                showToast('Please connect your wallet first', 'error');
-                return;
-            }
-
-            const solAmount = parseFloat(document.getElementById('solAmount').value);
-            
-            if (solAmount < MIN_BUY) {
-                showToast(`Minimum buy amount is ${MIN_BUY} SOL`, 'error');
-                return;
-            }
-
-            if (totalRaised + solAmount > HARD_CAP) {
-                showToast('This amount exceeds the hard cap', 'error');
-                return;
-            }
-
-            try {
-                // Show loading state
-                const buyBtn = document.getElementById('buyBtn');
-                buyBtn.disabled = true;
-                buyBtn.textContent = 'Processing...';
-
-                // Create transaction
-                const connection = new solanaWeb3.Connection(
-                    solanaWeb3.clusterApiUrl('mainnet-beta'),
-                    'confirmed'
-                );
-
-                const transaction = new solanaWeb3.Transaction().add(
-                    solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
-                        toPubkey: new solanaWeb3.PublicKey(PRESALE_WALLET),
-                        lamports: solAmount * solanaWeb3.LAMPORTS_PER_SOL
-                    })
-                );
-
-                // Send transaction
-                const signature = await window.solana.signAndSendTransaction(transaction);
-                
-                // Update stats
-                totalRaised += solAmount;
-                participantCount++;
-                updateProgress();
-                updateStats();
-
-                showToast('Purchase successful! Tokens will be distributed after presale.', 'success');
-                
-                // Reset form
-                document.getElementById('solAmount').value = '';
-                document.getElementById('tokenAmount').textContent = '0 WANKMI';
-                
-            } catch (error) {
-                showToast('Transaction failed. Please try again.', 'error');
-                console.error(error);
-            } finally {
-                // Reset button
-                const buyBtn = document.getElementById('buyBtn');
-                buyBtn.disabled = false;
-                buyBtn.textContent = 'Buy WANKMI';
-            }
-        });
-
-        // Update progress bar
-        function updateProgress() {
-            const progress = (totalRaised / HARD_CAP) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('totalRaised').textContent = totalRaised.toFixed(2) + ' SOL';
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('participants').textContent = participantCount;
-        }
-
-        // Show toast notification
-        function showToast(message, type) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type;
-            toast.style.display = 'block';
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-
-        // Load Solana Web3.js
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js';
-        document.head.appendChild(script);
-    </script>
-</body>
-</html>; // Replace with your Solana wallet address
-        const TOKEN_RATE = 100000; // 1 SOL = 100,000 WANKMI
-        const MIN_BUY = 0.1; // Minimum 0.1 SOL
-        const HARD_CAP = 1000; // 1000 SOL
-
-        // State
-        let connected = false;
-        let walletPublicKey = null;
-        let totalRaised = 0;
-        let participantCount = 0;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateProgress();
-            updateStats();
-        });
-
-        // Wallet Connection
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    const response = await window.solana.connect();
-                    walletPublicKey = response.publicKey.toString();
-                    connected = true;
-                    
-                    document.getElementById('connectWallet').textContent = 
-                        walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-                    
-                    document.getElementById('buyBtn').disabled = false;
-                    document.getElementById('buyBtn').textContent = 'Buy WANKMI';
-                    
-                    showToast('Wallet connected successfully!', 'success');
-                } catch (err) {
-                    showToast('Failed to connect wallet', 'error');
-                }
-            } else {
-                showToast('Please install Phantom wallet', 'error');
-                window.open('https://phantom.app/', '_blank');
-            }
-        });
-
-        // Calculate tokens
-        document.getElementById('solAmount').addEventListener('input', function(e) {
-            const solAmount = parseFloat(e.target.value) || 0;
-            const tokenAmount = solAmount * TOKEN_RATE;
-            document.getElementById('tokenAmount').textContent = 
-                tokenAmount.toLocaleString() + ' WANKMI';
-        });
-
-        // Buy tokens
-        document.getElementById('buyBtn').addEventListener('click', async () => {
-            if (!connected) {
-                showToast('Please connect your wallet first', 'error');
-                return;
-            }
-
-            const solAmount = parseFloat(document.getElementById('solAmount').value);
-            
-            if (solAmount < MIN_BUY) {
-                showToast(`Minimum buy amount is ${MIN_BUY} SOL`, 'error');
-                return;
-            }
-
-            if (totalRaised + solAmount > HARD_CAP) {
-                showToast('This amount exceeds the hard cap', 'error');
-                return;
-            }
-
-            try {
-                // Show loading state
-                const buyBtn = document.getElementById('buyBtn');
-                buyBtn.disabled = true;
-                buyBtn.textContent = 'Processing...';
-
-                // Create transaction
-                const connection = new solanaWeb3.Connection(
-                    solanaWeb3.clusterApiUrl('mainnet-beta'),
-                    'confirmed'
-                );
-
-                const transaction = new solanaWeb3.Transaction().add(
-                    solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
-                        toPubkey: new solanaWeb3.PublicKey(PRESALE_WALLET),
-                        lamports: solAmount * solanaWeb3.LAMPORTS_PER_SOL
-                    })
-                );
-
-                // Send transaction
-                const signature = await window.solana.signAndSendTransaction(transaction);
-                
-                // Update stats
-                totalRaised += solAmount;
-                participantCount++;
-                updateProgress();
-                updateStats();
-
-                showToast('Purchase successful! Tokens will be distributed after presale.', 'success');
-                
-                // Reset form
-                document.getElementById('solAmount').value = '';
-                document.getElementById('tokenAmount').textContent = '0 WANKMI';
-                
-            } catch (error) {
-                showToast('Transaction failed. Please try again.', 'error');
-                console.error(error);
-            } finally {
-                // Reset button
-                const buyBtn = document.getElementById('buyBtn');
-                buyBtn.disabled = false;
-                buyBtn.textContent = 'Buy WANKMI';
-            }
-        });
-
-        // Update progress bar
-        function updateProgress() {
-            const progress = (totalRaised / HARD_CAP) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('totalRaised').textContent = totalRaised.toFixed(2) + ' SOL';
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('participants').textContent = participantCount;
-        }
-
-        // Show toast notification
-        function showToast(message, type) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type;
-            toast.style.display = 'block';
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-
-        // Load Solana Web3.js
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js';
-        document.head.appendChild(script);
-    </script>
-</body>
-</html>; // Replace with your Solana wallet address
-        const TOKEN_RATE = 100000; // 1 SOL = 100,000 WANKMI
-        const MIN_BUY = 0.1; // Minimum 0.1 SOL
-        const HARD_CAP = 1000; // 1000 SOL
-
-        // State
-        let connected = false;
-        let walletPublicKey = null;
-        let totalRaised = 0;
-        let participantCount = 0;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateProgress();
-            updateStats();
-        });
-
-        // Wallet Connection
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    const response = await window.solana.connect();
-                    walletPublicKey = response.publicKey.toString();
-                    connected = true;
-                    
-                    document.getElementById('connectWallet').textContent = 
-                        walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-                    
-                    document.getElementById('buyBtn').disabled = false;
-                    document.getElementById('buyBtn').textContent = 'Buy WANKMI';
-                    
-                    showToast('Wallet connected successfully!', 'success');
-                } catch (err) {
-                    showToast('Failed to connect wallet', 'error');
-                }
-            } else {
-                showToast('Please install Phantom wallet', 'error');
-                window.open('https://phantom.app/', '_blank');
-            }
-        });
-
-        // Calculate tokens
-        document.getElementById('solAmount').addEventListener('input', function(e) {
-            const solAmount = parseFloat(e.target.value) || 0;
-            const tokenAmount = solAmount * TOKEN_RATE;
-            document.getElementById('tokenAmount').textContent = 
-                tokenAmount.toLocaleString() + ' WANKMI';
-        });
-
-        // Buy tokens
-        document.getElementById('buyBtn').addEventListener('click', async () => {
-            if (!connected) {
-                showToast('Please connect your wallet first', 'error');
-                return;
-            }
-
-            const solAmount = parseFloat(document.getElementById('solAmount').value);
-            
-            if (solAmount < MIN_BUY) {
-                showToast(`Minimum buy amount is ${MIN_BUY} SOL`, 'error');
-                return;
-            }
-
-            if (totalRaised + solAmount > HARD_CAP) {
-                showToast('This amount exceeds the hard cap', 'error');
-                return;
-            }
-
-            try {
-                // Show loading state
-                const buyBtn = document.getElementById('buyBtn');
-                buyBtn.disabled = true;
-                buyBtn.textContent = 'Processing...';
-
-                // Create transaction
-                const connection = new solanaWeb3.Connection(
-                    solanaWeb3.clusterApiUrl('mainnet-beta'),
-                    'confirmed'
-                );
-
-                const transaction = new solanaWeb3.Transaction().add(
-                    solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
-                        toPubkey: new solanaWeb3.PublicKey(PRESALE_WALLET),
-                        lamports: solAmount * solanaWeb3.LAMPORTS_PER_SOL
-                    })
-                );
-
-                // Send transaction
-                const signature = await window.solana.signAndSendTransaction(transaction);
-                
-                // Update stats
-                totalRaised += solAmount;
-                participantCount++;
-                updateProgress();
-                updateStats();
-
-                showToast('Purchase successful! Tokens will be distributed after presale.', 'success');
-                
-                // Reset form
-                document.getElementById('solAmount').value = '';
-                document.getElementById('tokenAmount').textContent = '0 WANKMI';
-                
-            } catch (error) {
-                showToast('Transaction failed. Please try again.', 'error');
-                console.error(error);
-            } finally {
-                // Reset button
-                const buyBtn = document.getElementById('buyBtn');
-                buyBtn.disabled = false;
-                buyBtn.textContent = 'Buy WANKMI';
-            }
-        });
-
-        // Update progress bar
-        function updateProgress() {
-            const progress = (totalRaised / HARD_CAP) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('totalRaised').textContent = totalRaised.toFixed(2) + ' SOL';
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('participants').textContent = participantCount;
-        }
-
-        // Show toast notification
-        function showToast(message, type) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type;
-            toast.style.display = 'block';
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-
-        // Load Solana Web3.js
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js';
-        document.head.appendChild(script);
     </script>
 </body>
 </html>
