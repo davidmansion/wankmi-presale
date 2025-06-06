@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANKMI Token Presale - Live on Solana</title>
+    <title>WANKMI Token Presale</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
         * {
             margin: 0;
@@ -11,164 +12,287 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #9333ea;
+            --primary-dark: #7c3aed;
+            --secondary: #ec4899;
+            --background: #0f0f0f;
+            --surface: #1a1a1a;
+            --surface-light: #2a2a2a;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-            color: #ffffff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top left, rgba(147, 51, 234, 0.2) 0%, transparent 40%),
+                        radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.2) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
+        /* Header */
         header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
         }
 
         .logo {
             font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .wallet-info {
-            display: flex;
+        /* Wallet Selector Modal */
+        .wallet-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
             align-items: center;
-            gap: 15px;
         }
 
-        .network-badge {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4caf50;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
+        .wallet-modal.active {
+            display: flex;
+        }
+
+        .wallet-modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .wallet-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .wallet-modal-title {
+            font-size: 20px;
             font-weight: 600;
         }
 
-        .wallet-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .close-modal {
+            background: none;
             border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            color: white;
-            font-weight: bold;
+            color: var(--text-muted);
+            font-size: 24px;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: color 0.2s;
         }
 
-        .wallet-btn:hover {
-            transform: scale(1.05);
+        .close-modal:hover {
+            color: var(--text);
         }
 
+        .wallet-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .wallet-option:hover {
+            background: rgba(147, 51, 234, 0.1);
+            border-color: var(--primary);
+        }
+
+        .wallet-option img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .wallet-option-name {
+            font-weight: 500;
+        }
+
+        .wallet-option-status {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wallet-connected {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .wallet-address {
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .disconnect-btn {
+            background: var(--surface-light);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .disconnect-btn:hover {
+            background: var(--error);
+        }
+
+        /* Main Content */
         .hero {
             text-align: center;
-            padding: 80px 0;
+            margin-bottom: 60px;
         }
 
         .hero h1 {
-            font-size: 56px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero p {
             font-size: 20px;
-            color: #b8b8b8;
-            margin-bottom: 40px;
+            color: var(--text-muted);
         }
 
-        .warning-banner {
-            background: rgba(255, 152, 0, 0.1);
-            border: 1px solid rgba(255, 152, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 14px;
-            color: #ff9800;
-        }
-
+        /* Presale Card */
         .presale-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: var(--surface);
+            border-radius: 24px;
             padding: 40px;
             max-width: 600px;
-            margin: 0 auto;
+            margin: 0 auto 60px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .presale-address {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-family: monospace;
-            font-size: 12px;
-            word-break: break-all;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .presale-address:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .presale-info {
+        .presale-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
 
-        .info-box {
-            background: rgba(255, 255, 255, 0.05);
+        .stat-box {
+            background: var(--surface-light);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             text-align: center;
         }
 
-        .info-box label {
-            display: block;
-            color: #b8b8b8;
-            margin-bottom: 5px;
+        .stat-label {
+            color: var(--text-muted);
             font-size: 14px;
+            margin-bottom: 8px;
         }
 
-        .info-box .value {
+        .stat-value {
             font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .progress-container {
+            margin-bottom: 32px;
         }
 
         .progress-bar {
-            background: rgba(255, 255, 255, 0.1);
-            height: 20px;
-            border-radius: 10px;
+            background: var(--surface-light);
+            height: 12px;
+            border-radius: 6px;
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .progress-fill {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             height: 100%;
             width: 0%;
             transition: width 2s ease;
@@ -176,44 +300,61 @@
 
         .progress-text {
             text-align: center;
-            color: #b8b8b8;
+            color: var(--text-muted);
             font-size: 14px;
-            margin-bottom: 30px;
         }
 
         .buy-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 30px;
+            background: var(--surface-light);
+            padding: 32px;
+            border-radius: 16px;
         }
 
         .input-group {
-            display: flex;
-            gap: 10px;
             margin-bottom: 20px;
         }
 
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
         .sol-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
+            width: 100%;
+            padding: 16px;
+            background: var(--background);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text);
             font-size: 18px;
+            transition: border-color 0.2s;
         }
 
         .sol-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         .token-output {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            background: var(--background);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -221,690 +362,587 @@
 
         .buy-btn {
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
             padding: 18px;
-            border-radius: 10px;
-            color: white;
             font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .buy-btn:hover:not(:disabled) {
-            transform: scale(1.02);
-        }
-
-        .buy-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .transaction-history {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .transaction-history h3 {
-            margin-bottom: 15px;
-            color: #b8b8b8;
-        }
-
-        .transaction-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 60px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-card h3 {
-            color: #b8b8b8;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .toast {
+        /* Toast Notifications */
+        .toast-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: none;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
             animation: slideIn 0.3s ease;
-            max-width: 400px;
-            word-wrap: break-word;
         }
 
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
+                opacity: 0;
             }
             to {
                 transform: translateX(0);
+                opacity: 1;
             }
         }
 
         .toast.success {
-            border-left: 4px solid #4caf50;
+            border-left: 3px solid var(--success);
         }
 
         .toast.error {
-            border-left: 4px solid #f44336;
+            border-left: 3px solid var(--error);
         }
 
         .toast.warning {
-            border-left: 4px solid #ff9800;
+            border-left: 3px solid var(--warning);
         }
 
-        .loader {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        /* Loading Spinner */
+        .spinner {
             width: 20px;
             height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 36px;
             }
             
-            .presale-info {
+            .presale-stats {
                 grid-template-columns: 1fr;
             }
             
-            .nav {
+            header {
                 flex-direction: column;
+                gap: 20px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="gradient-bg"></div>
+    
     <div class="container">
         <header>
-            <nav>
-                <div class="logo">WANKMI</div>
-                <div class="wallet-info">
-                    <span class="network-badge" id="networkBadge">Mainnet</span>
-                    <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
-                </div>
-            </nav>
+            <div class="logo">WANKMI</div>
+            <div id="walletContainer">
+                <button class="btn btn-primary" id="connectWalletBtn">
+                    Connect Wallet
+                </button>
+            </div>
         </header>
 
         <section class="hero">
             <h1>WANKMI Token Presale</h1>
-            <p>Join the future of decentralized finance on Solana</p>
+            <p>The future of meme tokens on Solana</p>
+        </section>
 
-            <div class="presale-card">
-                <div class="warning-banner">
-                    ⚠️ Always verify the presale address before sending SOL. Only send from wallets you control.
+        <div class="presale-card">
+            <div class="presale-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Token Price</div>
+                    <div class="stat-value">1 SOL = 100K</div>
                 </div>
-
-                <div class="presale-address" id="presaleAddress" onclick="copyAddress()">
-                    Presale Address: <strong>Gwx3M8KsBoVoMU1VnpMCRZRnEyZVH7q9EGHzNVXHRnxh</strong>
-                    <br><small>(Click to copy)</small>
+                <div class="stat-box">
+                    <div class="stat-label">Min Purchase</div>
+                    <div class="stat-value">0.1 SOL</div>
                 </div>
-
-                <div class="presale-info">
-                    <div class="info-box">
-                        <label>Presale Price</label>
-                        <div class="value">1 SOL = 100,000 WANKMI</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Minimum Buy</label>
-                        <div class="value">0.1 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Total Raised</label>
-                        <div class="value" id="totalRaised">0 SOL</div>
-                    </div>
-                    <div class="info-box">
-                        <label>Hard Cap</label>
-                        <div class="value">1000 SOL</div>
-                    </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Raised</div>
+                    <div class="stat-value" id="totalRaised">0 SOL</div>
                 </div>
+                <div class="stat-box">
+                    <div class="stat-label">Hard Cap</div>
+                    <div class="stat-value">1000 SOL</div>
+                </div>
+            </div>
 
+            <div class="progress-container">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
-                <div class="progress-text" id="progressText">0% Complete (0 / 1000 SOL)</div>
+                <div class="progress-text" id="progressText">0% Complete</div>
+            </div>
 
-                <div class="buy-section">
-                    <div class="input-group">
+            <div class="buy-section">
+                <div class="input-group">
+                    <label class="input-label">Amount to invest</label>
+                    <div class="input-wrapper">
                         <input 
                             type="number" 
                             class="sol-input" 
-                            id="solAmount" 
-                            placeholder="Enter SOL amount"
+                            id="solAmount"
+                            placeholder="0.0"
                             min="0.1"
                             step="0.1"
                         >
-                    </div>
-                    
-                    <div class="token-output">
-                        <span>You will receive:</span>
-                        <span id="tokenAmount">0 WANKMI</span>
-                    </div>
-
-                    <button class="buy-btn" id="buyBtn" disabled>
-                        Connect Wallet to Buy
-                    </button>
-                    
-                    <div style="margin-top: 10px; text-align: center; font-size: 12px; color: #666;">
-                        <a href="#" onclick="testWalletConnection(); return false;" style="color: #667eea;">Having issues? Test wallet connection</a>
+                        <span class="input-suffix">SOL</span>
                     </div>
                 </div>
 
-                <div class="transaction-history" id="transactionHistory" style="display: none;">
-                    <h3>Your Transactions</h3>
-                    <div id="transactionList"></div>
+                <div class="token-output">
+                    <span>You will receive</span>
+                    <span id="tokenAmount">0 WANKMI</span>
                 </div>
-            </div>
-        </section>
 
-        <section class="stats">
-            <div class="stat-card">
-                <h3>Total Supply</h3>
-                <div class="number">1,000,000,000</div>
+                <button class="btn btn-primary buy-btn" id="buyBtn" disabled>
+                    Connect Wallet First
+                </button>
             </div>
-            <div class="stat-card">
-                <h3>Presale Allocation</h3>
-                <div class="number">40%</div>
-            </div>
-            <div class="stat-card">
-                <h3>Liquidity Lock</h3>
-                <div class="number">2 Years</div>
-            </div>
-            <div class="stat-card">
-                <h3>Participants</h3>
-                <div class="number" id="participants">0</div>
-            </div>
-        </section>
+        </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- Wallet Selection Modal -->
+    <div class="wallet-modal" id="walletModal">
+        <div class="wallet-modal-content">
+            <div class="wallet-modal-header">
+                <h2 class="wallet-modal-title">Connect Wallet</h2>
+                <button class="close-modal" onclick="closeWalletModal()">&times;</button>
+            </div>
+            <div class="wallet-options" id="walletOptions">
+                <!-- Wallet options will be populated here -->
+            </div>
+        </div>
+    </div>
 
-    <!-- Solana Web3.js -->
-    <script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
-    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     <script>
-        // IMPORTANT: Replace this with your actual presale wallet address
-        const PRESALE_WALLET = Gwx3M8KsBoVoMU1VnpMCRZRnEyZVH7q9EGHzNVXHRnxh; // ← CHANGE THIS!
-        
-        // Configuration
+        // ===== CONFIGURATION =====
         const CONFIG = {
+            PRESALE_WALLET: Gwx3M8KsBoVoMU1VnpMCRZRnEyZVH7q9EGHzNVXHRnxh, // ← CHANGE THIS!
             TOKEN_RATE: 100000, // 1 SOL = 100,000 WANKMI
-            MIN_BUY: 0.1, // Minimum 0.1 SOL
-            HARD_CAP: 1000, // 1000 SOL
-            RPC_ENDPOINT: 'https://api.mainnet-beta.solana.com',
-            COMMITMENT: 'confirmed'
+            MIN_BUY: 0.1,
+            HARD_CAP: 1000,
+            RPC_URL: 'https://api.mainnet-beta.solana.com',
+            NETWORK: 'mainnet-beta'
         };
 
-        // State
-        let provider = null;
-        let walletPublicKey = null;
+        // ===== WALLET CONFIGURATIONS =====
+        const WALLETS = [
+            {
+                name: 'Phantom',
+                icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjQiIGZpbGw9IiNBQjlGRjIiLz4KPHBhdGggZD0iTTExNiA2NEMxMTYgMzkuNjk5IDk2LjMwMDUgMjAgNzIgMjBDNDcuNjk5NSAyMCAyOCAzOS42OTkgMjggNjRDMjggODguMzAxIDQ3LjY5OTUgMTA4IDcyIDEwOEM5Ni4zMDA1IDEwOCAxMTYgODguMzAxIDExNiA2NFoiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xXzIpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMV8yIiB4MT0iNzIiIHkxPSIyMCIgeDI9IjcyIiB5Mj0iMTA4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiM1MzRCQjEiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNTUxQkY5Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+',
+                check: () => window.solana && window.solana.isPhantom,
+                adapter: () => window.solana
+            },
+            {
+                name: 'Solflare',
+                icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMjU2IiBmaWxsPSIjRkM1RjVGIi8+Cjwvc3ZnPg==',
+                check: () => window.solflare,
+                adapter: () => window.solflare
+            },
+            {
+                name: 'Backpack',
+                icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjQiIGZpbGw9IiMxRjFGMUYiLz4KPC9zdmc+',
+                check: () => window.backpack,
+                adapter: () => window.backpack
+            }
+        ];
+
+        // ===== STATE =====
         let connection = null;
-        let userTransactions = [];
+        let walletAdapter = null;
+        let walletPublicKey = null;
+        let isConnecting = false;
 
-        // Initialize Solana connection
-        function initializeSolana() {
-            connection = new solanaWeb3.Connection(CONFIG.RPC_ENDPOINT, CONFIG.COMMITMENT);
-        }
-
-        // Get Phantom provider with retries
-        const getProvider = async () => {
-            // Check if Phantom wallet is already available
-            if ("solana" in window) {
-                const anyWindow = window;
-                const provider = anyWindow.solana;
-                if (provider.isPhantom) {
-                    return provider;
-                }
-            }
+        // ===== INITIALIZATION =====
+        function init() {
+            console.log('Initializing WANKMI presale...');
             
-            // Wait for Phantom to inject itself
-            let attempts = 0;
-            while (attempts < 20) {
-                const anyWindow = window;
-                if (anyWindow.solana && anyWindow.solana.isPhantom) {
-                    return anyWindow.solana;
-                }
-                await new Promise(resolve => setTimeout(resolve, 100));
-                attempts++;
-            }
+            // Initialize Solana connection
+            connection = new solanaWeb3.Connection(CONFIG.RPC_URL, 'confirmed');
             
-            return null;
-        };
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            initializeSolana();
+            // Load saved data
             loadPresaleData();
             
-            // Update presale address display
-            document.querySelector('#presaleAddress strong').textContent = PRESALE_WALLET;
-            
-            // Check for wallet after a delay
-            setTimeout(async () => {
-                provider = await getProvider();
-                if (provider) {
-                    console.log('Phantom wallet detected');
-                    
-                    // Try to eagerly connect
-                    try {
-                        const resp = await provider.connect({ onlyIfTrusted: true });
-                        if (resp.publicKey) {
-                            console.log('Wallet auto-connected');
-                            handleWalletConnection(resp.publicKey);
-                        }
-                    } catch (err) {
-                        console.log('Wallet not previously connected');
-                    }
-                }
-            }, 500);
-        });
-
-        // Connect wallet button click
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            console.log('Connect wallet clicked');
-            
-            // Method 1: Try the standard approach
-            provider = await getProvider();
-            
-            if (!provider) {
-                // Method 2: Direct check without async
-                if (window.solana && window.solana.isPhantom) {
-                    provider = window.solana;
-                }
-            }
-            
-            if (!provider) {
-                console.log('Phantom not found after all attempts');
-                showToast('Phantom wallet not found. Please install it first.', 'error');
-                
-                // Show helpful message
-                const install = confirm(
-                    'Phantom wallet is not installed or not detected.\n\n' +
-                    'Would you like to install Phantom wallet?\n\n' +
-                    'Note: After installation, please refresh this page.'
-                );
-                
-                if (install) {
-                    window.open('https://phantom.app/', '_blank');
-                }
-                return;
-            }
-
-            try {
-                console.log('Requesting connection...');
-                
-                // Try different connection methods
-                let resp;
-                try {
-                    resp = await provider.connect();
-                } catch (err) {
-                    console.log('First connection attempt failed, trying alternate method...');
-                    // Try with empty options
-                    resp = await provider.request({ method: "connect" });
-                }
-                
-                console.log('Connected:', resp.publicKey.toString());
-                handleWalletConnection(resp.publicKey);
-            } catch (err) {
-                console.error('Connection error:', err);
-                if (err.code === 4001) {
-                    showToast('User rejected the connection request', 'warning');
-                } else if (err.code === -32603) {
-                    showToast('Please unlock your Phantom wallet and try again', 'warning');
-                } else {
-                    showToast('Connection failed: ' + (err.message || 'Unknown error'), 'error');
-                    
-                    // Show debug info
-                    console.log('Full error:', err);
-                    console.log('Provider object:', provider);
-                }
-            }
-        });
-
-        // Handle successful wallet connection
-        function handleWalletConnection(publicKey) {
-            if (!publicKey) return;
-            
-            walletPublicKey = publicKey.toString();
-            console.log('Wallet connected:', walletPublicKey);
-            
-            // Update UI
-            document.getElementById('connectWallet').textContent = 
-                walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-            
-            document.getElementById('buyBtn').disabled = false;
-            document.getElementById('buyBtn').textContent = 'Buy WANKMI';
-            
-            // Load user transactions
-            loadUserTransactions();
-            
             // Set up event listeners
-            if (provider) {
-                provider.on("disconnect", () => {
-                    console.log('Wallet disconnected');
-                    handleDisconnect();
-                });
-                
-                provider.on("accountChanged", (publicKey) => {
-                    if (publicKey) {
-                        console.log('Account changed:', publicKey.toString());
-                        walletPublicKey = publicKey.toString();
-                        document.getElementById('connectWallet').textContent = 
-                            walletPublicKey.slice(0, 4) + '...' + walletPublicKey.slice(-4);
-                    } else {
-                        handleDisconnect();
-                    }
-                });
-            }
+            setupEventListeners();
             
-            showToast('Wallet connected successfully!', 'success');
+            // Check for pre-connected wallet
+            setTimeout(checkForConnectedWallet, 500);
         }
 
-        // Handle disconnect
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Connect wallet button
+            document.getElementById('connectWalletBtn').addEventListener('click', openWalletModal);
+            
+            // SOL amount input
+            document.getElementById('solAmount').addEventListener('input', handleAmountInput);
+            
+            // Buy button
+            document.getElementById('buyBtn').addEventListener('click', handleBuy);
+            
+            // Close modal on background click
+            document.getElementById('walletModal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    closeWalletModal();
+                }
+            });
+        }
+
+        // ===== WALLET CONNECTION =====
+        function openWalletModal() {
+            const modal = document.getElementById('walletModal');
+            const optionsContainer = document.getElementById('walletOptions');
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Populate wallet options
+            WALLETS.forEach(wallet => {
+                const isInstalled = wallet.check();
+                const option = document.createElement('div');
+                option.className = 'wallet-option';
+                option.innerHTML = `
+                    <img src="${wallet.icon}" alt="${wallet.name}">
+                    <span class="wallet-option-name">${wallet.name}</span>
+                    <span class="wallet-option-status">${isInstalled ? 'Detected' : 'Not Installed'}</span>
+                `;
+                
+                option.onclick = () => {
+                    if (isInstalled) {
+                        connectWallet(wallet);
+                    } else {
+                        showToast(`Please install ${wallet.name} wallet first`, 'warning');
+                        if (wallet.name === 'Phantom') {
+                            window.open('https://phantom.app/', '_blank');
+                        }
+                    }
+                };
+                
+                optionsContainer.appendChild(option);
+            });
+            
+            modal.classList.add('active');
+        }
+
+        function closeWalletModal() {
+            document.getElementById('walletModal').classList.remove('active');
+        }
+
+        async function connectWallet(wallet) {
+            if (isConnecting) return;
+            
+            isConnecting = true;
+            closeWalletModal();
+            
+            try {
+                const adapter = wallet.adapter();
+                if (!adapter) {
+                    throw new Error('Wallet not found');
+                }
+                
+                console.log(`Connecting to ${wallet.name}...`);
+                
+                // Connect to wallet
+                let publicKey;
+                
+                // Different wallets have different connection methods
+                if (adapter.connect) {
+                    const response = await adapter.connect();
+                    publicKey = response.publicKey || adapter.publicKey;
+                } else if (adapter.signIn) {
+                    await adapter.signIn();
+                    publicKey = adapter.publicKey;
+                }
+                
+                if (!publicKey) {
+                    throw new Error('Failed to get public key');
+                }
+                
+                // Success!
+                walletAdapter = adapter;
+                walletPublicKey = publicKey.toString();
+                
+                updateWalletUI();
+                showToast(`Connected to ${wallet.name}!`, 'success');
+                
+                // Set up disconnect listener
+                if (adapter.on) {
+                    adapter.on('disconnect', handleDisconnect);
+                }
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                
+                if (error.code === 4001) {
+                    showToast('Connection cancelled', 'warning');
+                } else {
+                    showToast(`Failed to connect: ${error.message}`, 'error');
+                }
+            } finally {
+                isConnecting = false;
+            }
+        }
+
+        async function checkForConnectedWallet() {
+            // Try to reconnect to previously connected wallet
+            for (const wallet of WALLETS) {
+                if (wallet.check()) {
+                    const adapter = wallet.adapter();
+                    if (adapter && adapter.connected) {
+                        walletAdapter = adapter;
+                        walletPublicKey = adapter.publicKey.toString();
+                        updateWalletUI();
+                        console.log(`Auto-connected to ${wallet.name}`);
+                        break;
+                    }
+                }
+            }
+        }
+
         function handleDisconnect() {
+            walletAdapter = null;
             walletPublicKey = null;
-            document.getElementById('connectWallet').textContent = 'Connect Wallet';
-            document.getElementById('buyBtn').disabled = true;
-            document.getElementById('buyBtn').textContent = 'Connect Wallet to Buy';
-            showToast('Wallet disconnected', 'warning');
+            updateWalletUI();
+            showToast('Wallet disconnected', 'info');
         }
 
-        // Calculate tokens
-        document.getElementById('solAmount').addEventListener('input', function(e) {
-            const solAmount = parseFloat(e.target.value) || 0;
-            const tokenAmount = solAmount * CONFIG.TOKEN_RATE;
-            document.getElementById('tokenAmount').textContent = 
-                tokenAmount.toLocaleString() + ' WANKMI';
-        });
+        function updateWalletUI() {
+            const container = document.getElementById('walletContainer');
+            const buyBtn = document.getElementById('buyBtn');
+            
+            if (walletPublicKey) {
+                // Show connected state
+                container.innerHTML = `
+                    <div class="wallet-connected">
+                        <span class="wallet-address">${walletPublicKey.slice(0, 4)}...${walletPublicKey.slice(-4)}</span>
+                        <button class="disconnect-btn" onclick="disconnectWallet()">Disconnect</button>
+                    </div>
+                `;
+                
+                buyBtn.disabled = false;
+                buyBtn.textContent = 'Buy WANKMI';
+            } else {
+                // Show connect button
+                container.innerHTML = `
+                    <button class="btn btn-primary" id="connectWalletBtn" onclick="openWalletModal()">
+                        Connect Wallet
+                    </button>
+                `;
+                
+                buyBtn.disabled = true;
+                buyBtn.textContent = 'Connect Wallet First';
+            }
+        }
 
-        // Buy tokens
-        document.getElementById('buyBtn').addEventListener('click', async () => {
-            if (!walletPublicKey) {
+        function disconnectWallet() {
+            if (walletAdapter && walletAdapter.disconnect) {
+                walletAdapter.disconnect();
+            }
+            handleDisconnect();
+        }
+
+        // ===== PRESALE FUNCTIONS =====
+        function handleAmountInput(e) {
+            const amount = parseFloat(e.target.value) || 0;
+            const tokens = amount * CONFIG.TOKEN_RATE;
+            document.getElementById('tokenAmount').textContent = tokens.toLocaleString() + ' WANKMI';
+        }
+
+        async function handleBuy() {
+            if (!walletPublicKey || !walletAdapter) {
                 showToast('Please connect your wallet first', 'error');
                 return;
             }
-
-            // Check if presale wallet is configured
-            if (PRESALE_WALLET === 'YOUR_PRESALE_WALLET_ADDRESS') {
-                showToast('Presale wallet not configured. Contact administrator.', 'error');
+            
+            if (CONFIG.PRESALE_WALLET === 'YOUR_PRESALE_WALLET_ADDRESS') {
+                showToast('Presale wallet not configured!', 'error');
                 return;
             }
-
-            const solAmount = parseFloat(document.getElementById('solAmount').value);
+            
+            const amount = parseFloat(document.getElementById('solAmount').value);
             
             // Validation
-            if (isNaN(solAmount) || solAmount <= 0) {
+            if (isNaN(amount) || amount <= 0) {
                 showToast('Please enter a valid amount', 'error');
                 return;
             }
-
-            if (solAmount < CONFIG.MIN_BUY) {
-                showToast(`Minimum buy amount is ${CONFIG.MIN_BUY} SOL`, 'error');
+            
+            if (amount < CONFIG.MIN_BUY) {
+                showToast(`Minimum purchase is ${CONFIG.MIN_BUY} SOL`, 'error');
                 return;
             }
-
-            const currentRaised = parseFloat(document.getElementById('totalRaised').textContent);
-            if (currentRaised + solAmount > CONFIG.HARD_CAP) {
-                showToast('This amount exceeds the hard cap', 'error');
-                return;
-            }
-
+            
+            const buyBtn = document.getElementById('buyBtn');
+            const originalText = buyBtn.innerHTML;
+            
             try {
-                // Show loading state
-                const buyBtn = document.getElementById('buyBtn');
+                // Update button state
                 buyBtn.disabled = true;
-                buyBtn.innerHTML = '<span class="loader"></span>Processing Transaction...';
-
-                // Check wallet balance first
-                const balance = await connection.getBalance(new solanaWeb3.PublicKey(walletPublicKey));
-                const balanceInSol = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                buyBtn.innerHTML = '<div class="spinner"></div> Processing...';
                 
-                if (balanceInSol < solAmount + 0.01) { // Adding 0.01 SOL for fees
-                    throw new Error(`Insufficient balance. You have ${balanceInSol.toFixed(4)} SOL but need ${(solAmount + 0.01).toFixed(4)} SOL (including fees)`);
+                // Check balance
+                const publicKey = new solanaWeb3.PublicKey(walletPublicKey);
+                const balance = await connection.getBalance(publicKey);
+                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                
+                if (balanceSOL < amount + 0.01) {
+                    throw new Error(`Insufficient balance. You need ${(amount + 0.01).toFixed(2)} SOL`);
                 }
-
-                // Create transaction
-                const fromPubkey = new solanaWeb3.PublicKey(walletPublicKey);
-                const toPubkey = new solanaWeb3.PublicKey(PRESALE_WALLET);
-                
-                // Get latest blockhash
-                const { blockhash } = await connection.getLatestBlockhash();
                 
                 // Create transaction
-                const transaction = new solanaWeb3.Transaction({
-                    recentBlockhash: blockhash,
-                    feePayer: fromPubkey
-                }).add(
+                const transaction = new solanaWeb3.Transaction();
+                
+                // Add transfer instruction
+                transaction.add(
                     solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: fromPubkey,
-                        toPubkey: toPubkey,
-                        lamports: solAmount * solanaWeb3.LAMPORTS_PER_SOL
+                        fromPubkey: publicKey,
+                        toPubkey: new solanaWeb3.PublicKey(CONFIG.PRESALE_WALLET),
+                        lamports: amount * solanaWeb3.LAMPORTS_PER_SOL
                     })
                 );
-
-                // Send and confirm transaction
-                const { signature } = await provider.signAndSendTransaction(transaction);
                 
-                showToast('Transaction sent! Confirming...', 'success');
+                // Get recent blockhash
+                const { blockhash } = await connection.getLatestBlockhash();
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = publicKey;
+                
+                // Sign and send transaction
+                let signature;
+                
+                // Different wallets have different signing methods
+                if (walletAdapter.signAndSendTransaction) {
+                    const result = await walletAdapter.signAndSendTransaction(transaction);
+                    signature = result.signature || result;
+                } else if (walletAdapter.signTransaction) {
+                    const signed = await walletAdapter.signTransaction(transaction);
+                    signature = await connection.sendRawTransaction(signed.serialize());
+                }
+                
+                if (!signature) {
+                    throw new Error('Failed to get transaction signature');
+                }
+                
+                showToast('Transaction sent! Confirming...', 'info');
                 
                 // Wait for confirmation
-                const latestBlockhash = await connection.getLatestBlockhash();
-                const confirmation = await connection.confirmTransaction({
-                    signature,
-                    blockhash: latestBlockhash.blockhash,
-                    lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
-                });
+                const confirmation = await connection.confirmTransaction(signature, 'confirmed');
                 
                 if (confirmation.value.err) {
                     throw new Error('Transaction failed');
                 }
-
+                
                 // Success!
                 showToast(`Success! TX: ${signature.slice(0, 8)}...`, 'success');
                 
-                // Add to transaction history
-                addTransaction({
-                    signature: signature,
-                    amount: solAmount,
-                    tokens: solAmount * CONFIG.TOKEN_RATE,
-                    timestamp: new Date().toLocaleString()
-                });
-                
-                // Update stats (in real app, this would come from backend)
-                updatePresaleStats(solAmount);
-                
-                // Reset form
+                // Update UI
+                updatePresaleStats(amount);
                 document.getElementById('solAmount').value = '';
                 document.getElementById('tokenAmount').textContent = '0 WANKMI';
                 
             } catch (error) {
                 console.error('Transaction error:', error);
-                showToast('Transaction failed: ' + error.message, 'error');
+                showToast(error.message || 'Transaction failed', 'error');
             } finally {
-                // Reset button
-                const buyBtn = document.getElementById('buyBtn');
                 buyBtn.disabled = false;
-                buyBtn.innerHTML = 'Buy WANKMI';
-            }
-        });
-
-        // Add transaction to history
-        function addTransaction(tx) {
-            userTransactions.unshift(tx);
-            localStorage.setItem('wankmi_transactions', JSON.stringify(userTransactions));
-            displayTransactions();
-        }
-
-        // Display transaction history
-        function displayTransactions() {
-            const historyDiv = document.getElementById('transactionHistory');
-            const listDiv = document.getElementById('transactionList');
-            
-            if (userTransactions.length > 0) {
-                historyDiv.style.display = 'block';
-                listDiv.innerHTML = userTransactions.map(tx => `
-                    <div class="transaction-item">
-                        <span>${tx.amount} SOL → ${tx.tokens.toLocaleString()} WANKMI</span>
-                        <span>${tx.timestamp}</span>
-                    </div>
-                `).join('');
+                buyBtn.innerHTML = originalText;
             }
         }
 
-        // Load user transactions from localStorage
-        function loadUserTransactions() {
-            const saved = localStorage.getItem('wankmi_transactions');
-            if (saved) {
-                userTransactions = JSON.parse(saved);
-                displayTransactions();
-            }
-        }
-
-        // Update presale stats (mock - in real app, fetch from backend)
-        function updatePresaleStats(newAmount) {
-            const currentRaised = parseFloat(document.getElementById('totalRaised').textContent);
-            const newTotal = currentRaised + newAmount;
+        // ===== UI FUNCTIONS =====
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
             
-            document.getElementById('totalRaised').textContent = newTotal.toFixed(2) + ' SOL';
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
             
-            const progress = (newTotal / CONFIG.HARD_CAP) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('progressText').textContent = 
-                `${progress.toFixed(1)}% Complete (${newTotal.toFixed(2)} / ${CONFIG.HARD_CAP} SOL)`;
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
             
-            // Update participants (mock)
-            const currentParticipants = parseInt(document.getElementById('participants').textContent);
-            document.getElementById('participants').textContent = currentParticipants + 1;
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <span class="toast-message">${message}</span>
+            `;
             
-            // Save to localStorage (mock persistence)
-            localStorage.setItem('wankmi_stats', JSON.stringify({
-                raised: newTotal,
-                participants: currentParticipants + 1
-            }));
-        }
-
-        // Load presale data (mock - in real app, fetch from backend)
-        function loadPresaleData() {
-            const saved = localStorage.getItem('wankmi_stats');
-            if (saved) {
-                const stats = JSON.parse(saved);
-                document.getElementById('totalRaised').textContent = stats.raised.toFixed(2) + ' SOL';
-                document.getElementById('participants').textContent = stats.participants;
-                
-                const progress = (stats.raised / CONFIG.HARD_CAP) * 100;
-                document.getElementById('progressFill').style.width = progress + '%';
-                document.getElementById('progressText').textContent = 
-                    `${progress.toFixed(1)}% Complete (${stats.raised.toFixed(2)} / ${CONFIG.HARD_CAP} SOL)`;
-            }
-        }
-
-        // Copy presale address
-        function copyAddress() {
-            navigator.clipboard.writeText(PRESALE_WALLET).then(() => {
-                showToast('Presale address copied to clipboard!', 'success');
-            }).catch(() => {
-                showToast('Failed to copy address', 'error');
-            });
-        }
-
-        // Show toast notification
-        function showToast(message, type) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type;
-            toast.style.display = 'block';
+            container.appendChild(toast);
             
             setTimeout(() => {
-                toast.style.display = 'none';
-            }, 4000);
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
         }
 
-        // Debug helper
-        window.debugWallet = async () => {
-            console.log('=== Wallet Debug Info ===');
-            console.log('window.solana exists:', 'solana' in window);
-            console.log('window.phantom exists:', 'phantom' in window);
-            if (window.solana) {
-                console.log('window.solana.isPhantom:', window.solana.isPhantom);
-                console.log('window.solana:', window.solana);
-            }
-            const provider = await getProvider();
-            console.log('Provider found:', !!provider);
-            return provider;
+        function updatePresaleStats(newAmount) {
+            // This would normally fetch from a backend
+            const stats = JSON.parse(localStorage.getItem('wankmi_stats') || '{"raised": 0, "participants": 0}');
+            stats.raised += newAmount;
+            stats.participants += 1;
+            
+            localStorage.setItem('wankmi_stats', JSON.stringify(stats));
+            
+            // Update UI
+            document.getElementById('totalRaised').textContent = stats.raised.toFixed(2) + ' SOL';
+            
+            const progress = (stats.raised / CONFIG.HARD_CAP) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${progress.toFixed(1)}% Complete`;
+        }
+
+        function loadPresaleData() {
+            const stats = JSON.parse(localStorage.getItem('wankmi_stats') || '{"raised": 0, "participants": 0}');
+            document.getElementById('totalRaised').textContent = stats.raised.toFixed(2) + ' SOL';
+            
+            const progress = (stats.raised / CONFIG.HARD_CAP) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${progress.toFixed(1)}% Complete`;
+        }
+
+        // ===== START APP =====
+        document.addEventListener('DOMContentLoaded', init);
+
+        // ===== DEBUGGING =====
+        window.debugPresale = () => {
+            console.log('=== WANKMI Presale Debug ===');
+            console.log('Wallet Connected:', !!walletPublicKey);
+            console.log('Wallet Address:', walletPublicKey);
+            console.log('Wallet Adapter:', walletAdapter);
+            console.log('Available Wallets:', WALLETS.map(w => ({
+                name: w.name,
+                installed: w.check()
+            })));
+            console.log('Connection:', connection);
+            console.log('Config:', CONFIG);
         };
-
-        // Test wallet connection
-        async function testWalletConnection() {
-            console.log('Testing wallet connection...');
-            
-            // Check if Phantom is installed
-            const isPhantomInstalled = window.solana && window.solana.isPhantom;
-            
-            if (!isPhantomInstalled) {
-                alert('Phantom wallet is not installed!\n\n' +
-                      'Please install Phantom wallet extension from:\n' +
-                      'https://phantom.app/\n\n' +
-                      'After installation, refresh this page.');
-                window.open('https://phantom.app/', '_blank');
-                return;
-            }
-            
-            alert('✅ Phantom wallet detected!\n\n' +
-                  'Wallet is installed correctly.\n' +
-                  'Click "Connect Wallet" button to connect.');
-            
-            // Log debug info
-            console.log('Phantom detected:', window.solana);
-            console.log('Is Phantom:', window.solana.isPhantom);
-        }
     </script>
 </body>
 </html>
